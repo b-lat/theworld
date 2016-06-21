@@ -1,9 +1,9 @@
-using System;
-
 namespace TheWorld.Controllers.Web
 {
+    using Microsoft.AspNet.Authorization;
     using Microsoft.AspNet.Mvc;
 
+    using TheWorld.Models;
     using TheWorld.Services;
     using TheWorld.ViewModels;
 
@@ -11,14 +11,25 @@ namespace TheWorld.Controllers.Web
     {
         private IMailService _mailService;
 
-        public AppController(IMailService service)
+        private IWorldRepository _repository;
+
+        public AppController(IMailService service, IWorldRepository repository)
         {
-            this._mailService = service;
+            _mailService = service;
+            this._repository = repository;
         }
 
         public IActionResult Index()
         {
-            return View();
+            return this.View();
+        }
+
+        [Authorize]
+        public IActionResult Trips()
+        {
+            var trips = this._repository.GetAllTrips();
+
+            return View(trips);
         }
 
         public IActionResult About()
